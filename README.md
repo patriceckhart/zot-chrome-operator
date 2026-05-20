@@ -2,6 +2,8 @@
 
 Chrome extension + local bridge for chatting with zot from a Chrome side panel and letting [zot](https://www.zot.sh) operate browser tabs through a `browser_action` tool.
 
+![zot Chrome operator](docs/preview.png)
+
 ## Install
 
 Install directly as a zot extension, then install the `zot-chrome` command shim:
