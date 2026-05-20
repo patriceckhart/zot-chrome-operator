@@ -42,16 +42,18 @@ function startZot() {
   if (model) args.push("--model", model)
 
   console.log("[bridge] spawning zot", args.join(" "))
-  zot = spawn("zot", args, {
+  const proc = spawn("zot", args, {
     stdio: ["pipe", "pipe", "pipe"],
     env: { ...process.env, ZOT_CHROME_BRIDGE_PORT: String(PORT) },
     cwd: ROOT,
   })
+  zot = proc
 
-  zot.stderr?.on("data", (d: Buffer) => process.stderr.write(`[zot stderr] ${d}`))
+  proc.stderr?.on("data", (d: Buffer) => process.stderr.write(`[zot stderr] ${d}`))
 
-  zotRL = readline.createInterface({ input: zot.stdout! })
-  zotRL.on("line", (line: string) => {
+  const rl = readline.createInterface({ input: proc.stdout! })
+  zotRL = rl
+  rl.on("line", (line: string) => {
     try {
       const ev = JSON.parse(line)
       if (ev.type === "response" && ev.command === "hello" && ev.data) {
@@ -62,10 +64,11 @@ function startZot() {
     if (activeSocket?.readyState === WebSocket.OPEN) activeSocket.send(line)
   })
 
-  zot.on("exit", (code) => {
+  proc.on("exit", (code) => {
     console.log(`[bridge] zot exited with code ${code}`)
+    if (zot !== proc) return
     zot = null
-    zotRL = null
+    if (zotRL === rl) zotRL = null
     if (activeSocket?.readyState === WebSocket.OPEN) {
       activeSocket.send(JSON.stringify({ kind: "status", payload: { state: "exited", code } }))
     }
@@ -73,10 +76,12 @@ function startZot() {
 }
 
 function killZot() {
-  if (!zot) return
-  zot.kill()
+  const proc = zot
+  if (!proc) return
   zot = null
+  zotRL?.close()
   zotRL = null
+  proc.kill()
 }
 
 function sendToZot(cmd: Record<string, unknown>) {
@@ -211,8 +216,9 @@ wss.on("connection", (ws) => {
         if (msg.kind === "select_model") {
           provider = msg.payload?.provider
           model = msg.payload?.model
-          killZot(); startZot()
+          killZot()
           ws.send(JSON.stringify({ kind: "status", payload: { state: "restarted", reason: "provider-switch", provider, model } }))
+          setTimeout(startZot, 100)
           return
         }
       } catch (err) {

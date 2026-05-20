@@ -1,1 +1,0 @@
-import{c as t,j as e,r,A as s}from"./App-Cc4-E0xl.js";chrome.runtime.sendMessage({type:"SIDEPANEL_OPENED"}).catch(()=>{});t.createRoot(document.getElementById("root")).render(e.jsx(r.StrictMode,{children:e.jsx(s,{})}));

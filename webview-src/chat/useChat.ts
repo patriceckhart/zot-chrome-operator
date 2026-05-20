@@ -227,6 +227,9 @@ export function useChat() {
             browserContextInjectedRef.current = false;
             return;
           } else if (msg.payload?.state === "restarted") {
+            setBusy(false);
+            assistantIdRef.current = null;
+            browserContextInjectedRef.current = false;
             // Optimistically update the visible model + provider so the picker
             // reflects the choice before the new process emits its hello.
             if (msg.payload.provider || msg.payload.model) {
@@ -325,6 +328,7 @@ export function useChat() {
         role: "user",
         text: trimmed + attachmentSummary,
       });
+      assistantIdRef.current = null;
       setBusy(true);
       vscode().postMessage({
         kind: "rpc",
