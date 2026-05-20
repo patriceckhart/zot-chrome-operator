@@ -1,0 +1,2 @@
+#!/bin/sh
+exec node "/Users/pat/Library/Application Support/zot/extensions/zot-chrome-operator/bin/zot-chrome.js" "$@"

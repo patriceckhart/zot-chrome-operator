@@ -1,0 +1,8 @@
+{
+  "name": "zot-chrome-operator",
+  "version": "0.1.0",
+  "exec": "./zot-extension.js",
+  "language": "javascript",
+  "description": "Installs the zot-chrome browser operator CLI shim.",
+  "enabled": true
+}

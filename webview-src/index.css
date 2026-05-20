@@ -1,0 +1,235 @@
+@import "@fontsource/geist/latin-400.css";
+@import "@fontsource/geist/latin-500.css";
+@import "@fontsource/geist/latin-600.css";
+@import "@fontsource/geist-mono/latin-400.css";
+@import "@fontsource/geist-mono/latin-500.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * zot chat — dark-only palette. Hue/lightness mirror the zot.sh
+ * marketing site: near-black neutrals lifted with a touch of cyan,
+ * the signature `--zot` cyan used sparingly as the accent. All shadcn
+ * primitives are wired to these tokens via tailwind.config.cjs.
+ *
+ * No light theme: the extension forces .dark on <html> in main.tsx,
+ * and we intentionally ship a single set of values to keep the surface
+ * cohesive regardless of which VS Code theme the user has active.
+ */
+@layer base {
+  :root,
+  .dark {
+    /* near-black, slight cool tint so it sits on dark VS Code themes */
+    --background: 220 14% 6%;
+    --foreground: 210 20% 96%;
+
+    --card: 220 14% 8.5%;
+    --card-foreground: 210 20% 96%;
+
+    --popover: 220 14% 9%;
+    --popover-foreground: 210 20% 96%;
+
+    /* user bubble + send button: the zot cyan */
+    --primary: 196 100% 71%;            /* #6ADAFF */
+    --primary-foreground: 220 30% 8%;   /* black-on-cyan */
+
+    --secondary: 220 12% 14%;
+    --secondary-foreground: 210 20% 92%;
+
+    --muted: 220 12% 12%;
+    --muted-foreground: 215 14% 62%;
+
+    --accent: 196 100% 71%;
+    --accent-foreground: 220 30% 8%;
+
+    --destructive: 0 75% 60%;
+    --destructive-foreground: 210 20% 98%;
+
+    --border: 220 12% 16%;
+    --input: 220 12% 16%;
+    --ring: 196 100% 71%;
+
+    --radius: 0.625rem;
+
+    /* extras consumed by hand-rolled bits below */
+    --zot: 196 100% 71%;
+    --zot-soft: 196 100% 71% / 0.18;
+    --zot-glow: 196 100% 71% / 0.35;
+  }
+
+  html, body, #root {
+    height: 100%;
+    width: 100%;
+    min-width: 100%;
+    max-width: none;
+    /*
+     * Prevent the document itself from scrolling. The webview only ever
+     * needs one scrolling region (the transcript). Allowing the outer
+     * document to scroll causes the body's radial-gradient background to
+     * shift and the composer to slide off-screen when the transcript
+     * grows beyond the iframe.
+     */
+    overflow: hidden;
+  }
+
+  body {
+    margin: 0;
+    /* VS Code applies default webview body padding. Make the extension
+       surface flush with the panel edges. */
+    padding: 0 !important;
+    width: 100vw;
+    min-width: 100vw;
+    max-width: none;
+    box-sizing: border-box;
+    background:
+      radial-gradient(
+        1200px 600px at 0% -10%,
+        hsl(var(--zot-soft)),
+        transparent 60%
+      ),
+      radial-gradient(
+        900px 500px at 110% 110%,
+        hsl(196 100% 71% / 0.08),
+        transparent 55%
+      ),
+      hsl(var(--background));
+    color: hsl(var(--foreground));
+    /*
+     * Geist Mono everywhere. The zot brand voice on the website mixes Geist
+     * Sans (UI chrome) with Geist Mono (terminal demos), but in this
+     * extension we want the whole surface to feel like a terminal-adjacent
+     * coding tool, so the chrome adopts Geist Mono too. Override with the
+     * `.font-sans` utility on a per-element basis if anything looks bad.
+     */
+    font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-feature-settings: "ss01", "cv11";
+    font-size: 12.5px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Make sure controls (input/textarea/button) inherit Geist Mono too —
+     browsers default to platform UI fonts for form elements. */
+  input, textarea, button, select {
+    font-family: inherit;
+  }
+
+  .font-sans {
+    font-family: "Geist", ui-sans-serif, system-ui, -apple-system, sans-serif !important;
+  }
+
+  code, kbd, pre, .font-mono {
+    font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+}
+
+/* Hide the default VS Code webview scrollbar; ScrollArea provides its own. */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb {
+  background: hsl(220 12% 22%);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover { background: hsl(220 12% 30%); }
+::-webkit-scrollbar-track { background: transparent; }
+
+/*
+ * Text selection: paint with the zot cyan so highlights match the rest of
+ * the brand instead of the OS-default blue/grey. Foreground is forced to a
+ * deep near-black so selected text stays readable against the saturated
+ * cyan. ::-moz-selection mirrors the rule for Firefox.
+ */
+::selection {
+  background-color: hsl(var(--zot));
+  color: hsl(220 30% 8%);
+}
+::-moz-selection {
+  background-color: hsl(var(--zot));
+  color: hsl(220 30% 8%);
+}
+
+/* Animated text caret used at the tail of streaming assistant text. */
+@keyframes zot-caret {
+  0%, 49%   { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.zot-caret {
+  display: inline-block;
+  width: 0.5ch;
+  margin-left: 1px;
+  border-bottom: 2px solid hsl(var(--zot));
+  animation: zot-caret 1s steps(1) infinite;
+}
+
+/* Subtle pulsing dot for the "agent is thinking" state. */
+@keyframes zot-pulse {
+  0%, 100% { transform: scale(1);   opacity: 0.6; }
+  50%      { transform: scale(1.4); opacity: 1; }
+}
+.zot-pulse > span {
+  display: inline-block;
+  width: 4px; height: 4px;
+  border-radius: 999px;
+  background: hsl(var(--zot));
+  margin: 0 2px;
+  animation: zot-pulse 1.2s ease-in-out infinite;
+}
+.zot-pulse > span:nth-child(2) { animation-delay: 0.15s; }
+.zot-pulse > span:nth-child(3) { animation-delay: 0.30s; }
+
+/* Card hover lift for assistant bubbles. */
+.zot-card-glow {
+  box-shadow:
+    0 0 0 1px hsl(220 12% 16%),
+    0 10px 30px -20px hsl(196 100% 71% / 0.25);
+}
+
+/* User bubble gets a faint cyan rim. */
+.zot-user-bubble {
+  background: linear-gradient(180deg, hsl(196 100% 71% / 0.95), hsl(196 100% 65%));
+  color: hsl(220 30% 8%);
+  box-shadow:
+    0 0 0 1px hsl(196 100% 71% / 0.6),
+    0 8px 24px -12px hsl(var(--zot-glow));
+}
+
+/* Tool card: monospace, dashed cyan border, faint cyan tint. */
+.zot-tool-card {
+  background: hsl(220 14% 9%);
+  border: 1px dashed hsl(196 100% 71% / 0.35);
+  border-radius: var(--radius);
+}
+
+/* Overlays (popovers, dropdowns). Solid-ish background with a heavy
+   backdrop blur so the body's radial glows behind the panel are blurred
+   into a dim wash rather than bleeding straight through. */
+.zot-popover {
+  background: hsl(220 14% 9% / 0.92);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+  box-shadow:
+    0 0 0 1px hsl(220 12% 20%),
+    0 24px 60px -16px rgb(0 0 0 / 0.7),
+    0 0 40px -10px hsl(var(--zot-glow));
+}
+
+/* Sticky group headers inside .zot-popover should match the panel bg, not
+   the bare popover variable (which is fully opaque and looks like a step). */
+.zot-popover [data-sticky-header] {
+  background: hsl(220 14% 9% / 0.95);
+}
+
+/* The composer "frame" — glassy panel with focus glow. */
+.zot-composer {
+  background:
+    linear-gradient(180deg, hsl(220 14% 10%), hsl(220 14% 8%));
+  border: 1px solid hsl(220 12% 18%);
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+.zot-composer:focus-within {
+  border-color: hsl(196 100% 71% / 0.55);
+  box-shadow:
+    0 0 0 1px hsl(196 100% 71% / 0.4),
+    0 0 30px -8px hsl(var(--zot-glow));
+}

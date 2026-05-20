@@ -1,0 +1,9 @@
+{
+  "name": "zot-browser-tool",
+  "version": "0.1.0",
+  "exec": "node",
+  "args": ["extension.js"],
+  "language": "javascript",
+  "description": "browser_action tool for zot Chrome Operator",
+  "enabled": true
+}

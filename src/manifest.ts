@@ -1,0 +1,34 @@
+import { defineManifest } from "@crxjs/vite-plugin"
+import pkg from "../package.json"
+
+export default defineManifest({
+  manifest_version: 3,
+  name: "zot",
+  version: pkg.version,
+  description: pkg.description,
+  permissions: ["storage", "tabs", "scripting", "activeTab", "sidePanel"],
+  host_permissions: ["<all_urls>"],
+  action: {
+    default_popup: "popup.html",
+    default_title: "zot",
+  },
+  side_panel: {
+    default_path: "sidepanel.html",
+  },
+  background: {
+    service_worker: "src/background.ts",
+    type: "module",
+  },
+  content_scripts: [
+    {
+      matches: ["<all_urls>"],
+      js: ["src/content.ts"],
+      run_at: "document_idle",
+    },
+  ],
+  icons: {
+    "16": "public/icons/icon-16.png",
+    "48": "public/icons/icon-48.png",
+    "128": "public/icons/icon-512.png",
+  },
+})
