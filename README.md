@@ -28,15 +28,30 @@ After installation, `zot-chrome` should be available from any directory:
 zot-chrome status
 ```
 
-## Load the Chrome extension
+## Install the Chrome extension
 
-Print the unpacked Chrome extension path:
+Build the unpacked Chrome extension and print its path:
 
 ```bash
 zot-chrome ext
 ```
 
-The first run installs npm dependencies and builds the unpacked extension if needed. Then open `chrome://extensions`, enable Developer mode, click **Load unpacked**, and select the printed `dist` directory.
+The first run installs npm dependencies and builds the unpacked extension if needed. The command prints a path ending in `dist`, for example:
+
+```text
+/Users/you/Library/Application Support/zot/extensions/zot-chrome-operator/dist
+```
+
+Then install it in Chrome:
+
+1. Open `chrome://extensions`.
+2. Enable **Developer mode** in the top-right corner.
+3. Click **Load unpacked**.
+4. Select the printed `dist` directory.
+5. Pin the `zot` extension if you want quick access.
+6. Click the extension icon to open the side panel.
+
+After updates, run `zot-chrome ext` again if needed, then click the reload button for the unpacked extension on `chrome://extensions`.
 
 ## Run the bridge
 
