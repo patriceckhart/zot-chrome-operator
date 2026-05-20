@@ -4,13 +4,14 @@ Chrome extension + local bridge for chatting with zot from a Chrome side panel a
 
 ## Install
 
-Install directly as a zot extension:
+Install directly as a zot extension, then install the `zot-chrome` command shim:
 
 ```bash
 zot ext install https://github.com/patriceckhart/zot-chrome-operator
+node "$HOME/Library/Application Support/zot/extensions/zot-chrome-operator/bin/install-cli.js"
 ```
 
-This does not require any changes to zot. The installed zot extension runs a small setup script that creates a global `zot-chrome` shim at:
+This does not require any changes to zot. The second command creates a global `zot-chrome` shim at:
 
 ```text
 ~/.local/bin/zot-chrome
@@ -21,6 +22,8 @@ Make sure `~/.local/bin` is on your `PATH`. For example, add this to your shell 
 ```bash
 export PATH="$HOME/.local/bin:$PATH"
 ```
+
+Why the second command? `zot ext install` only clones/copies extension files; it does not execute install hooks. The shim is also refreshed automatically the next time zot starts normally, but running `install-cli.js` makes `zot-chrome` available immediately.
 
 After installation, `zot-chrome` should be available from any directory:
 
