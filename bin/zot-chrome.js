@@ -52,7 +52,7 @@ function run(command, args) {
 }
 
 function ensureDependencies() {
-  if (fs.existsSync(path.join(ROOT, "node_modules", ".bin", "tsx"))) return
+  if (fs.existsSync(path.join(ROOT, "node_modules", "ws", "package.json"))) return
   console.log("Installing zot-chrome dependencies...")
   run("npm", ["install", "--ignore-scripts"])
 }
@@ -65,6 +65,7 @@ function ensureBuilt() {
 }
 
 function nodeArgsForBridge() {
+  ensureDependencies()
   return ["--experimental-strip-types", path.join(ROOT, "server", "bridge.ts")]
 }
 
