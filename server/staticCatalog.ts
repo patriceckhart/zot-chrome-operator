@@ -2,7 +2,7 @@ import type { CatalogModel } from "./zotHome";
 
 /**
  * Curated snapshot of zot's hardcoded `var Catalog` in
- * `internal/provider/models.go`. We need this because zot's RPC
+ * `packages/provider/models.go`. We need this because zot's RPC
  * `get_models` strips two fields we want to surface in the picker:
  *
  *   - DisplayName  (e.g. "Claude Opus 4.5" vs raw id `claude-opus-4-5`)

@@ -6,7 +6,7 @@ import * as path from "node:path";
 /**
  * Resolve the zot data directory (where `auth.json`, `models-cache.json`,
  * `models.json`, sessions and logs live). Mirrors the algorithm in
- * `internal/agent/config.go: ZotHome`.
+ * `packages/agent/config.go: ZotHome`.
  */
 export function zotHome(): string {
   if (process.env.ZOT_HOME) return process.env.ZOT_HOME;
